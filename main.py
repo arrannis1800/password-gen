@@ -6,7 +6,7 @@ from datetime import datetime as dt
 
 def create_csv():
     if 'passwords.csv' not in os.listdir():
-        headers = ['id', 'password', 'datetime']
+        headers = ['id', 'name', 'login', 'password', 'created_at', 'updated_at']
         with open('passwords.csv', 'w') as file:
             writer = csv.writer(file)
             writer.writerow(headers)
@@ -59,16 +59,16 @@ def asking_params():
 
 
 def generate_pass(num_char=20, chars=True, upper_chars=True, spec_chars=True):
-    acceptable_chars = [i for i in range(48, 58)]  # nums
+    acceptable_chars = [i for i in range(48, 58)]               # nums
     if chars:
-        acceptable_chars += [i for i in range(97, 123)]  # lowercase letters
+        acceptable_chars += [i for i in range(97, 123)]         # lowercase letters
     if upper_chars:
-        acceptable_chars += [i for i in range(65, 91)]  # uppercase letter
+        acceptable_chars += [i for i in range(65, 91)]          # uppercase letter
     if spec_chars:
-        acceptable_chars += [i for i in range(34, 48)]  # special numbers
-        acceptable_chars += [i for i in range(58, 65)]
-        acceptable_chars += [i for i in range(91, 97)]
-        acceptable_chars += [i for i in range(123, 127)]
+        acceptable_chars += [i for i in range(34, 48)] \
+                            + [i for i in range(58, 65)] \
+                            + [i for i in range(91, 97)] \
+                            + [i for i in range(123, 127)]      # special characters
 
     password = ''.join(chr(int(random.choice(acceptable_chars))) for i in range(num_char))
     print('''Your password is >>>''', password)
@@ -77,9 +77,16 @@ def generate_pass(num_char=20, chars=True, upper_chars=True, spec_chars=True):
 
 
 def save_pass(password):
+    name = input('''How to name it?\n>> ''')
+    login = input('''And what login?\n>> ''')
+    curtime = dt.now().strftime("%Y-%m-%d %H:%M:%S")
     with open("passwords.csv", 'r') as file:
         reader = file.readlines()
-        new_row = [1 if len(reader) == 1 else int(reader[-1].split(',')[0]) + 1, password, dt.now().strftime("%Y-%m-%d %H:%M:%S")]
+        try:
+            pass_id = int(reader[-1].split(',')[0]) + 1
+        except:
+            pass_id = 1
+        new_row = [pass_id, name, login, password, curtime, curtime]
 
     with open('passwords.csv', 'a+', newline='') as file:
         writer = csv.writer(file)
@@ -93,10 +100,11 @@ def main():
     print('''Hello, It's password gen. Few questions before\n''')
 
     while True:
-        menu_1 = input('''What do you want to do?\n1. Create a new pass\n\nq - for quit\n>> ''').lower()
-        if menu_1 in ('q', 'quit'):
+        main_menu = input('''\nWhat do you want to do?\n1. Create a new pass\n\nq - for quit\n>> ''').lower()
+        if main_menu in ('q', 'quit'):
+            print('''Good bye!''')
             break
-        elif menu_1 in ('1', 'pass', 'password', 'create'):
+        elif main_menu in ('1', 'pass', 'password', 'create'):
             num_char, chars, upper_chars, spec_chars = asking_params()
             password_gened = generate_pass(num_char=num_char, chars=chars, upper_chars=upper_chars,
                                            spec_chars=spec_chars)
@@ -111,8 +119,6 @@ def main():
                     break
                 else:
                     print('''Can't understand. Please write Yes or No''')
-
-
 
 
 if __name__ == '__main__':

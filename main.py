@@ -93,7 +93,8 @@ def generate_pass(num_char=20, chars=True, upper_chars=True, spec_chars=True):
     if upper_chars:
         acceptable_chars += [i for i in range(65, 91)]  # uppercase letter
     if spec_chars:
-        acceptable_chars += [i for i in range(34, 48)] \
+        acceptable_chars += [i for i in range(34, 44)] \
+                            + [i for i in range(45, 48)] \
                             + [i for i in range(58, 65)] \
                             + [i for i in range(91, 97)] \
                             + [i for i in range(123, 127)]  # special characters
@@ -140,19 +141,93 @@ def show_pass():
                     string += '''For move on previous page type "<". '''
                 if cur_page != pages - 1:
                     string += '''For move on next page type ">". '''
+                if len(reader) > 2:
+                    string += '''\nFor update pass type "u". '''
                 string += '''\nTo return to main menu type "q". \n>> '''
                 action = input(string).lower()
                 match action:
-                    case 'q':
+                    case 'q' | 'quit':
                         break
                     case '>':
                         if cur_page != pages - 1: cur_page += 1
                     case '<':
                         if cur_page != 0: cur_page -= 1
+                    case 'u' | 'update':
+                        file.close()
+                        updating_pass()
+                        return show_pass()
                     case _:
                         print('''Please, try again''')
                 continue
             break
+
+
+def updating_pass():
+    with open("passwords.csv", 'r') as file:
+        reader = file.readlines()
+        while True:
+
+            pass_id = input('''What password do you want to update [id]\nOr 'q' for quit\n>> ''').lower()
+            if pass_id in ('q', 'quit'):
+                return
+            else:
+                try:
+                    pass_id = int(pass_id)
+                except:
+                    print('''Something was wrong try again to type a password id''')
+                    continue
+            row_num = 0
+            for i, row in enumerate(reader):
+                row_id = row.split(',')[0]
+                if str(pass_id) == row_id:
+                    row_num = i
+                    break
+            if row_num != 0:
+                break
+            print('''Can't find a pass with this id''')
+
+        while True:
+            update = input('''What do you want to update\n1. Name of record.    2. Login.    3. Password\n'q' for quit\n>> ''').lower()
+            match update:
+                case 'q' | 'quit':
+                    return
+                case '1' | 'name':
+                    index_in_row = 1
+                case '2' | 'login':
+                    index_in_row = 2
+                case '3' | 'pass' | 'password':
+                    index_in_row = 3
+                case _:
+                    continue
+            string = '''Type a new one'''
+            if index_in_row == 3:
+                string += ''' or autogenerate [g]'''
+            string += '''\n>> '''
+            new_type = input(string)
+            if new_type in ('g', 'generate', 'autogenerate'):
+                num_char, chars, upper_chars, spec_chars = asking_params()
+                new_type = generate_pass(num_char=num_char, chars=chars, upper_chars=upper_chars,
+                                               spec_chars=spec_chars)
+            break
+
+
+
+    with open('passwords.csv', 'r') as readFile, open('passwords.csv'.replace('.csv', '_new.csv'), 'w') as writeFile:
+        for i, row in enumerate(readFile):
+            if i == row_num:
+                row = row.split(',')
+                row[index_in_row] = new_type
+                row[5] = dt.now().strftime("%Y-%m-%d %H:%M:%S") + '\n'
+                writeFile.write(','.join(row))
+            else:
+                writeFile.write(row)
+
+    os.remove('passwords.csv')
+    os.rename('passwords_new.csv', 'passwords.csv')
+
+
+
+
 
 
 def main():

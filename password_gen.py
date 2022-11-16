@@ -25,3 +25,4 @@ def gen_pass_record():
     login = input('''And what login?\n>> ''')
 
     return name, login
+

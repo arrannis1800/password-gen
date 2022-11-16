@@ -15,7 +15,7 @@ def main_menu():
         elif menu in ('1', 'create'):
             num_char, chars, upper_chars, spec_chars = asking_params()
             password_gened = pg.generate_pass(num_char=num_char, chars=chars, upper_chars=upper_chars,
-                                           spec_chars=spec_chars)
+                                              spec_chars=spec_chars)
             while True:
                 saving = input('''Do you want to save it? [Y|n]\n>> ''').lower()
                 if saving in ('y', 'yes'):
@@ -43,7 +43,8 @@ def updating_pass():
                 break
 
     while True:
-        update = input('''What do you want to update\n1. Name of record.    2. Login.    3. Password\n'q' for quit\n>> ''').lower()
+        update = input(
+            '''What do you want to update\n1. Name of record.    2. Login.    3. Password\n'q' for quit\n>> ''').lower()
         match update:
             case 'q' | 'quit':
                 return
@@ -63,8 +64,8 @@ def updating_pass():
         if new_type in ('g', 'generate', 'autogenerate'):
             num_char, chars, upper_chars, spec_chars = asking_params()
             new_type = pg.generate_pass(num_char=num_char, chars=chars, upper_chars=upper_chars,
-                                           spec_chars=spec_chars)
-        pdb.update_pass(index_pass=index_pass, index_in_row=index_in_row,new_type=new_type)
+                                        spec_chars=spec_chars)
+        pdb.update_pass(index_pass=index_pass, index_in_row=index_in_row, new_type=new_type)
         break
 
 
@@ -161,4 +162,3 @@ def main():
 if __name__ == '__main__':
     main()
     os.system("cls")
-

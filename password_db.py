@@ -12,9 +12,30 @@ def create_csv():
         print('''>> CSV file created \n''')
 
 
-def open_csv(mode):
+def open_csv(mode='r'):
     with open("passwords.csv", mode, encoding="utf-8") as file:
         return file.readlines()
+
+
+def csv_to_dist(file):
+    file = file[2:]
+    pass_dict = {}
+    for row in file:
+        row = row.split(',')
+        # print(row)
+        pass_dict[row[0]] = {
+            'name': row[1],
+            'login': row[2],
+            'password': row[3],
+            'created_at': row[4],
+            'updated_at': row[5],
+        }
+    return pass_dict
+
+def write_csv(new_row):
+    with open('passwords.csv', 'a+', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(new_row)
 
 
 def show_csv(file, cur_page=0):
@@ -25,17 +46,15 @@ def show_csv(file, cur_page=0):
 
 def save_pass(name='', login='', password=''):
     curtime = dt.now().strftime("%Y-%m-%d %H:%M:%S")
-    with open("passwords.csv", 'r') as file:
-        reader = file.readlines()
-        try:
-            pass_id = int(reader[-1].split(',')[0]) + 1
-        except:
-            pass_id = 1
-        new_row = [pass_id, name, login, password, curtime, curtime]
 
-    with open('passwords.csv', 'a+', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(new_row)
+    reader = open_csv('r')
+    try:
+        pass_id = int(reader[-1].split(',')[0]) + 1
+    except:
+        pass_id = 1
+    new_row = [pass_id, name, login, password, curtime, curtime]
+
+    write_csv(new_row=new_row)
 
     print('''It was saved in csv file''')
 
@@ -61,9 +80,9 @@ def find_pass(pass_id):
 
 
 def update_pass(index_pass, index_in_row, new_type):
-
-    with open('passwords.csv', 'r') as readFile, open('passwords.csv'.replace('.csv', '_new.csv'), 'w') as writeFile:
-        for i, row in enumerate(readFile):
+    read_file = open_csv('r')
+    with open('passwords.csv', 'w') as writeFile:
+        for i, row in enumerate(read_file):
             if i == index_pass:
                 row = row.split(',')
                 row[index_in_row] = new_type
@@ -71,6 +90,3 @@ def update_pass(index_pass, index_in_row, new_type):
                 writeFile.write(','.join(row))
             else:
                 writeFile.write(row)
-
-    os.remove('passwords.csv')
-    os.rename('passwords_new.csv', 'passwords.csv')

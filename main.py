@@ -65,18 +65,22 @@ def updating_pass():
             num_char, chars, upper_chars, spec_chars = asking_params()
             new_type = pg.generate_pass(num_char=num_char, chars=chars, upper_chars=upper_chars,
                                         spec_chars=spec_chars)
-        pdb.update_pass(index_pass=index_pass, index_in_row=index_in_row, new_type=new_type)
+
+        new_row = pdb.find_pass(pass_id=int(pass_id), row=True)
+        new_row[index_in_row-1] = new_type
+        pdb.update_pass(index_pass=pass_id, new_row=new_row)
         break
 
 
 def show_pass():
     print('''\nYour passwords list''')
 
-    reader = pdb.open_csv('r')
-    pages = int(-(-((len(reader) - 2) / 10) // 1))
+
     cur_page = 0
 
     while True:
+        reader = pdb.open_csv('r')
+        pages = int(-(-((len(reader) - 2) / 10) // 1))
         pdb.show_csv(reader, cur_page)
 
         if pages > 1:

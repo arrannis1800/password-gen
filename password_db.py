@@ -59,7 +59,7 @@ def save_pass(name='', login='', password=''):
     print('''It was saved in csv file''')
 
 
-def find_pass(pass_id):
+def find_pass(pass_id,row=False):
     reader = open_csv('r')
 
     try:
@@ -75,18 +75,22 @@ def find_pass(pass_id):
             row_num = i
             break
     if row_num != 0:
-        return row_num
+        if row:
+            return row.split(',')[1:-1]
+        else:
+            return row_num
     print('''Can't find a pass with this id''')
 
 
-def update_pass(index_pass, index_in_row, new_type):
+def update_pass(index_pass, new_row):
     read_file = open_csv('r')
     with open('passwords.csv', 'w') as writeFile:
         for i, row in enumerate(read_file):
-            if i == index_pass:
-                row = row.split(',')
-                row[index_in_row] = new_type
-                row[5] = dt.now().strftime("%Y-%m-%d %H:%M:%S") + '\n'
+            if row.split(',')[0] == index_pass:
+                row = [index_pass]
+                row += new_row
+                row.append(dt.now().strftime("%Y-%m-%d %H:%M:%S") + '\n')
                 writeFile.write(','.join(row))
             else:
                 writeFile.write(row)
+

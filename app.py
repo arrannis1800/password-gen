@@ -9,8 +9,6 @@ class UI(QMainWindow):
     def __init__(self):
         super().__init__()
 
-
-
         # loading the ui file with uic module
         self.passwords = None
         uic.loadUi("app.ui", self)
@@ -100,6 +98,11 @@ class UI(QMainWindow):
             self.Random_pass.hide()
             self.Dismiss_button.hide()
             self.Menu_pass.hide()
+            self.length_num.hide()
+            self.length_pass.hide()
+            self.low_case.hide()
+            self.spec_symb.hide()
+            self.upper_case.hide()
 
             update_pass(index_pass=self.Pass_id.text(), new_row=[self.Pass_name.text(), self.Pass_login.text(),
                                                                  self.Pass_pass.text(), self.Pass_created.text()])

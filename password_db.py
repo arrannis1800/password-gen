@@ -13,7 +13,7 @@ def create_csv():
 
 
 def open_csv(mode='r'):
-    with open("passwords.csv", mode, encoding="utf-8") as file:
+    with open("passwords.csv", mode) as file:
         return file.readlines()
 
 
